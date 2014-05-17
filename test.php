@@ -3,6 +3,11 @@ define('ROOT', dirname(realpath(__FILE__)));
 include(ROOT . '/library/autoload.php');
 include(ROOT . '/vendor/autoload.php');
 
+// $event = \D3R\Event\Storage\Json::read('/tmp/json/sara.errors.8afdea9a917d219b071d2bcc1bbd43b7.json');
+// var_dump($event);
+
+// exit;
+
 $event = \D3R\Event::Factory('sara.errors')
             ->set('error', 'Foobar is not defined')
             ->set('line', 102)
