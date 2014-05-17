@@ -12,19 +12,20 @@ $event = \D3R\Event::Factory('sara.errors')
             ->set('error', 'Foobar is not defined')
             ->set('line', 102)
             ;
-// $options = array(
-//     'credentials' => array(
-//             'username' => 'd3r.events',
-//             'password' => 'd3r.3v3nt5',
-//             'hostname' => '192.168.1.70'
-//         )
-// );
-
 $options = array(
-    'directory' => '/tmp/json'
+    'username' => 'd3r.events',
+    'password' => 'd3r.3v3nt5',
+    'hostname' => '192.168.1.70',
+    'database' => 'd3r.events'
 );
 
-$writer = \D3R\Event\Storage\Base::Factory('json', $options);
+// $options = array(
+//     'directory' => '/tmp/json'
+// );
+
+$writer = \D3R\Event\Storage\Base::Factory('InfluxDB', $options);
+// @TODO Remove var_dump
+// var_dump($writer); exit();
 $writer->write($event);
 
 /*

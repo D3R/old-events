@@ -23,8 +23,6 @@ abstract class Base
     public static function Factory($type, $options = array())
     {
         $class = "\D3R\Event\Storage\\" . ucfirst(strtolower($type));
-        // @TODO Remove var_dump
-        var_dump($class);
         if (!class_exists($class)) {
             throw new \D3R\Exception('Invalid storage ' . $type);
         }
