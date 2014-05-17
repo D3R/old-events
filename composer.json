@@ -1,5 +1,6 @@
 {
     "name": "d3r/events",
+    "description": "A framework for creating and storing simple events in various backends",
     "require": {
         "crodas/influx-php": "*"
     },
