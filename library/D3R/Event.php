@@ -24,6 +24,17 @@ class Event
     }
 
     /**
+     * The timestamp for this event
+     *
+     * This is allocated automatically by default in seconds but can be set
+     * explicitly with setTimestamp()
+     *
+     * @var int
+     * @author Ronan Chilvers <ronan@d3r.com>
+     */
+    protected $_timestamp;
+
+    /**
      * The name of this event
      *
      * @var string
@@ -46,7 +57,32 @@ class Event
      */
     public function __construct($name)
     {
-        $this->_name = $name;
+        $this->_timestamp   = time();
+        $this->_name        = $name;
+    }
+
+    /**
+     * Set the timestamp for this event
+     *
+     * @param int $timestamp A standard UNIX epoch timestamp
+     * @return $this
+     * @author Ronan Chilvers <ronan@d3r.com>
+     */
+    public function setTimestamp($timestamp)
+    {
+        $this->_timestamp = $timestamp;
+        return $this;
+    }
+
+    /**
+     * Get the timestamp for this event
+     *
+     * @return int
+     * @author Ronan Chilvers <ronan@d3r.com>
+     */
+    public function getTimestamp()
+    {
+        return $this->_timestamp;
     }
 
     /**
