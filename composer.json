@@ -1,0 +1,14 @@
+{
+    "name": "d3r/events",
+    "require": {
+        "crodas/influx-php": "*"
+    },
+    "license": "proprietary",
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Ronan Chilvers",
+            "email": "ronan@d3r.com"
+        }
+    ]
+}
