@@ -1,40 +1,40 @@
 <?php
 /**
- * The Writer classes take an event and write it to a
+ * The Storage classes take an event and write it to a
  * data store. The data store could be a file on disk
  * or a data store like Influx DB, Elasticsearch or
  * something else
  *
  */
 
-namespace D3R\Event\Writer;
+namespace D3R\Event\Storage;
 
 abstract class Base
 {
     /**
-     * Standard factory method to get a writer instance
+     * Standard factory method to get a storage instance
      *
-     * @param string $type The type of writer to get
-     * @param array $options Optional settings for the specified writer
-     * @return \D3R\Event\Writer
+     * @param string $type The type of storage to get
+     * @param array $options Optional settings for the specified storage
+     * @return \D3R\Event\Storage
      * @throws \D3R\Exception
      * @author Ronan Chilvers <ronan@d3r.com>
      */
     public static function Factory($type, $options = array())
     {
-        $class = "\D3R\Event\Writer\\" . ucfirst(strtolower($type));
+        $class = "\D3R\Event\Storage\\" . ucfirst(strtolower($type));
         // @TODO Remove var_dump
         var_dump($class);
         if (!class_exists($class)) {
-            throw new \D3R\Exception('Invalid writer ' . $type);
+            throw new \D3R\Exception('Invalid storage ' . $type);
         }
-        $writer = new $class($options);
+        $storage = new $class($options);
 
-        return $writer;
+        return $storage;
     }
 
     /**
-     * A set of key => value options for this writer
+     * A set of key => value options for this storage
      *
      * @var array
      * @author Ronan Chilvers <ronan@d3r.com>
@@ -42,7 +42,7 @@ abstract class Base
     protected $_options = array();
 
     /**
-     * Default options to use for this writer
+     * Default options to use for this storage
      *
      * @var array
      * @author Ronan Chilvers <ronan@d3r.com>
@@ -79,7 +79,7 @@ abstract class Base
     }
 
     /**
-     * Write an event to this writers data store
+     * Write an event to this data store
      *
      * @param \D3R\Event $event
      * @return boolean

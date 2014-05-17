@@ -1,10 +1,9 @@
 <?php
 
-namespace D3R\Event\Writer;
+namespace D3R\Event\Storage;
 
 class Json extends Base
 {
-
     /**
      * Class constructor
      *
@@ -29,14 +28,15 @@ class Json extends Base
         $directory = $this->checkDirectory($directory);
 
         $data = array(
-            'name' => $event->getName(),
-            'data' => $event->getData()
+            'name'          => $event->getName(),
+            'timestamp'     => $event->getTimestamp(),
+            'data'          => $event->getData()
         );
 
-        $hash = md5(mt_rand(0,1000));
-        $json = json_encode($data);
+        $hash = md5($event->getTimestamp() . $event->getName() . mt_rand(0,1000));
+        $json = json_encode($data) . "\n";
 
-        if (!file_put_contents($directory . '/' . $event->getName() . '.' . $hash . '.json.event', $json)) {
+        if (!file_put_contents($directory . '/' . $event->getName() . '.' . $hash . '.json', $json)) {
             throw new \D3R\Exception("Unable to write event");
         }
 

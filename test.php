@@ -7,7 +7,6 @@ $event = \D3R\Event::Factory('sara.errors')
             ->set('error', 'Foobar is not defined')
             ->set('line', 102)
             ;
-
 // $options = array(
 //     'credentials' => array(
 //             'username' => 'd3r.events',
@@ -17,10 +16,10 @@ $event = \D3R\Event::Factory('sara.errors')
 // );
 
 $options = array(
-    'directory' => ROOT . '/json'
+    'directory' => '/tmp/json'
 );
 
-$writer = \D3R\Event\Writer\Base::Factory('json', $options);
+$writer = \D3R\Event\Storage\Base::Factory('json', $options);
 $writer->write($event);
 
 /*
