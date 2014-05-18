@@ -12,6 +12,20 @@ $event = \D3R\Event::Factory('sara.errors')
             ->set('error', 'Foobar is not defined')
             ->set('line', 102)
             ;
+$event1 = \D3R\Event::Factory('sara.errors')
+            ->set('error', 'Foobar is not defined')
+            ->set('line', 103)
+            ;
+$event2 = \D3R\Event::Factory('sara.errors')
+            ->set('error', 'Foobar is not defined')
+            ->set('line', 104)
+            ;
+$event3 = \D3R\Event::Factory('sara.errors')
+            ->set('error', 'Foobar is not defined')
+            ->set('line', 105)
+            ;
+
+
 $options = array(
     'username' => 'd3r.events',
     'password' => 'd3r.3v3nt5',
@@ -26,7 +40,13 @@ $options = array(
 $writer = \D3R\Event\Store\Base::Factory('InfluxDB', $options);
 // @TODO Remove var_dump
 // var_dump($writer); exit();
-$writer->write($event);
+$writer->batchWrite($event);
+$writer->batchWrite($event1);
+$writer->batchWrite($event2);
+$writer->batchWrite($event3);
+// @TODO Remove var_dump
+// var_dump($writer); exit();
+$writer->commitBatch();
 
 /*
 $client = new \crodas\InfluxPHP\Client(
