@@ -3,7 +3,7 @@ define('ROOT', dirname(realpath(__FILE__)));
 include(ROOT . '/library/autoload.php');
 include(ROOT . '/vendor/autoload.php');
 
-// $event = \D3R\Event\Storage\Json::read('/tmp/json/sara.errors.8afdea9a917d219b071d2bcc1bbd43b7.json');
+// $event = \D3R\Event\Store\Json::read('/tmp/json/sara.errors.8afdea9a917d219b071d2bcc1bbd43b7.json');
 // var_dump($event);
 
 // exit;
@@ -23,7 +23,7 @@ $options = array(
 //     'directory' => '/tmp/json'
 // );
 
-$writer = \D3R\Event\Storage\Base::Factory('InfluxDB', $options);
+$writer = \D3R\Event\Store\Base::Factory('InfluxDB', $options);
 // @TODO Remove var_dump
 // var_dump($writer); exit();
 $writer->write($event);

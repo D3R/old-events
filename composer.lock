@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "c03e64c6391e56730f126a8d8b9675f8",
+    "hash": "c0c4b1cb5a1cd127100253c3208d30fa",
     "packages": [
         {
             "name": "crodas/influx-php",

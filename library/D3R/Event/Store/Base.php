@@ -1,13 +1,13 @@
 <?php
 /**
- * The Storage classes take an event and write it to a
+ * The Store classes take an event and write it to a
  * data store. The data store could be a file on disk
  * or a data store like Influx DB, Elasticsearch or
  * something else
  *
  */
 
-namespace D3R\Event\Storage;
+namespace D3R\Event\Store;
 
 abstract class Base
 {
@@ -16,13 +16,13 @@ abstract class Base
      *
      * @param string $type The type of storage to get
      * @param array $options Optional settings for the specified storage
-     * @return \D3R\Event\Storage
+     * @return \D3R\Event\Store
      * @throws \D3R\Exception
      * @author Ronan Chilvers <ronan@d3r.com>
      */
     public static function Factory($type, $options = array())
     {
-        $class = "\D3R\Event\Storage\\" . ucfirst(strtolower($type));
+        $class = "\D3R\Event\Store\\" . ucfirst(strtolower($type));
         if (!class_exists($class)) {
             throw new \D3R\Exception('Invalid storage ' . $type);
         }

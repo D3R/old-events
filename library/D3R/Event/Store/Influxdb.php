@@ -1,6 +1,6 @@
 <?php
 
-namespace D3R\Event\Storage;
+namespace D3R\Event\Store;
 
 class Influxdb extends Base
 {
