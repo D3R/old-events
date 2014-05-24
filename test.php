@@ -3,10 +3,52 @@ define('ROOT', dirname(realpath(__FILE__)));
 include(ROOT . '/library/autoload.php');
 include(ROOT . '/vendor/autoload.php');
 
-// $event = \D3R\Event\Store\Json::read('/tmp/json/sara.errors.8afdea9a917d219b071d2bcc1bbd43b7.json');
-// var_dump($event);
+function out($message) {
+    echo " > ${message}\n";
+}
 
-// exit;
+function err($message) {
+    echo " ! ${message}\n";
+}
+
+function usage() {
+    global $argv;
+    err('Usage : ' . $argv[0] . ' <username> <password> [<database>] [<hostname>]');
+}
+
+$validArgs = array('username', 'password', 'database', 'hostname');
+$requiredArgs = array('username', 'password', 'database');
+
+$args = $argv;
+array_shift($args);
+foreach ($validArgs as $arg) {
+    $$arg = array_shift($args);
+    if (empty($$arg) && in_array($arg, $requiredArgs)) {
+        err('Missing argument "' . $arg . '"');
+        usage();
+        exit(1);
+    }
+    out($arg . ' : ' . $$arg);
+}
+
+if (!isset($hostname)) {
+    $hostname = 'localhost';
+}
+
+
+$options = array(
+    'username' => $username,
+    'password' => $password,
+    'hostname' => $hostname,
+    'database' => $database
+);
+
+// @TODO Remove var_dump
+var_dump($options);
+
+// $options = array(
+//     'directory' => '/tmp/json'
+// );
 
 $event = \D3R\Event::Factory('sara.errors')
             ->set('error', 'Foobar is not defined')
@@ -24,18 +66,6 @@ $event3 = \D3R\Event::Factory('sara.errors')
             ->set('error', 'Foobar is not defined')
             ->set('line', 105)
             ;
-
-
-$options = array(
-    'username' => 'd3r.events',
-    'password' => 'd3r.3v3nt5',
-    'hostname' => '192.168.1.70',
-    'database' => 'd3r.events'
-);
-
-// $options = array(
-//     'directory' => '/tmp/json'
-// );
 
 $writer = \D3R\Event\Store\Base::Factory('InfluxDB', $options);
 // @TODO Remove var_dump
