@@ -43,40 +43,52 @@ $options = array(
     'database' => $database
 );
 
-// @TODO Remove var_dump
-var_dump($options);
-
 // $options = array(
 //     'directory' => '/tmp/json'
 // );
 
-$event = \D3R\Event::Factory('sara.errors')
-            ->set('error', 'Foobar is not defined')
-            ->set('line', 102)
-            ;
-$event1 = \D3R\Event::Factory('sara.errors')
-            ->set('error', 'Foobar is not defined')
-            ->set('line', 103)
-            ;
-$event2 = \D3R\Event::Factory('sara.errors')
-            ->set('error', 'Foobar is not defined')
-            ->set('line', 104)
-            ;
-$event3 = \D3R\Event::Factory('sara.errors')
-            ->set('error', 'Foobar is not defined')
-            ->set('line', 105)
-            ;
+// @TODO Remove var_dump
+var_dump($options);
 
-$writer = \D3R\Event\Store\Base::Factory('InfluxDB', $options);
+$event = \D3R\Event::Factory('sara.errors')
+            ->tag('mysite.errors')
+            ->set('error', 'Foobar is not defined')
+            ->set('line', rand(1,100))
+            ;
 // @TODO Remove var_dump
-// var_dump($writer); exit();
-$writer->batchWrite($event);
-$writer->batchWrite($event1);
-$writer->batchWrite($event2);
-$writer->batchWrite($event3);
-// @TODO Remove var_dump
-// var_dump($writer); exit();
-$writer->commitBatch();
+var_dump($event->getData());
+
+// $event1 = \D3R\Event::Factory('sara.errors')
+//             ->set('error', 'Foobar is not defined')
+//             ->set('line', 103)
+//             ;
+// $event2 = \D3R\Event::Factory('sara.errors')
+//             ->set('error', 'Foobar is not defined')
+//             ->set('line', 104)
+//             ;
+// $event3 = \D3R\Event::Factory('sara.errors')
+//             ->set('error', 'Foobar is not defined')
+//             ->set('line', 105)
+//             ;
+
+try {
+    $writer = \D3R\Event\Store\Base::Factory('InfluxDB', $options);
+    // $writer = \D3R\Event\Store\Base::Factory('Json', $options);
+    // @TODO Remove var_dump
+    // var_dump($writer); exit();
+    $writer->write($event);
+    // $writer->batchWrite($event);
+    // $writer->batchWrite($event1);
+    // $writer->batchWrite($event2);
+    // $writer->batchWrite($event3);
+    // @TODO Remove var_dump
+    // var_dump($writer); exit();
+    // $writer->commitBatch();
+}
+catch (Exception $ex) {
+    // @TODO Remove var_dump
+    echo('ERROR : ' . $ex->getMessage() . "\n");
+}
 
 /*
 $client = new \crodas\InfluxPHP\Client(

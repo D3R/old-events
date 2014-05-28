@@ -12,6 +12,22 @@ class Influxdb extends Base
      */
     protected $_batchEvents;
 
+    /**
+     * A cached curl handle
+     *
+     * @var resource
+     * @author Ronan Chilvers <ronan@d3r.com>
+     */
+    protected $_curlHandle = null;
+
+    /**
+     * Last status code
+     *
+     * @var array
+     * @author Ronan Chilvers <ronan@d3r.com>
+     */
+    protected $_lastCurlStatus = null;
+
     public function __construct(array $options)
     {
         parent::__construct($options);
@@ -21,19 +37,28 @@ class Influxdb extends Base
                 'username'      => false,
                 'password'      => false,
                 'hostname'      => 'localhost',
-                'port'          => 8086
+                'port'          => 8086,
+                'verify_peer'   => false,
             );
     }
 
     public function write(\D3R\Event $event)
     {
-        $db = $this->db();
-
-        $data           = $event->getData();
-        $data['time']   = $event->getTimestamp();
-
+        // $db = $this->db();
         try {
-            $db->insert($event->getName(), $data);
+            // $db->insert($event->getName(), $data);
+            $columns        = $event->getDataKeys();
+            $columns[]      = 'time';
+            $data           = array_values($event->getData());
+            $data[]         = $event->getTimestamp();
+
+            $name = $event->getName();
+            $tags = $event->getTags();
+            array_unshift($tags, $name);
+
+            foreach ($tags as $tag) {
+                $this->send($tag, $columns, array($data));
+            }
         }
         catch (Exception $ex) {
             throw new \D3R\Exception($ex->getMessage());
@@ -128,5 +153,94 @@ class Influxdb extends Base
         }
 
         return $db;
+    }
+
+    /**
+     * Write a dataset to InfluxDB
+     *
+     * @param string $name
+     * @param array $columns
+     * @param array $data
+     * @return boolean
+     * @throws \D3R\Exception
+     * @author Ronan Chilvers <ronan@d3r.com>
+     */
+    protected function send($name, $columns, $data)
+    {
+        $payload = array(
+                'name'      => $name,
+                'columns'   => $columns,
+                'points'    => $data,
+            );
+
+        $url        = 'http://' . $this->option('hostname') . '/db/' . $this->option('database') . '/series?u=' . $this->option('username') . '&p=' . $this->option('password');
+        $payload    = json_encode(array($payload));
+        $curl       = $this->curl();
+
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
+
+// @TODO Remove var_dump
+var_dump($payload);
+
+        if (!$result = curl_exec($curl)) {
+            throw new \D3R\Exception(curl_error($curl), curl_errno($curl));
+        }
+
+        $this->_lastCurlStatus = curl_getinfo($curl);
+// @TODO Remove var_dump
+var_dump($this->_lastCurlStatus['http_code']); exit();
+        if (!$this->success((int) $this->_lastCurlStatus['http_code'])) {
+            throw new \D3R\Exception('Error writing event to InfluxDB');
+        }
+
+        return true;
+    }
+
+    /**
+     * Does the given status code indicate success
+     *
+     * @param int
+     * @return boolean
+     * @author Ronan Chilvers <ronan@d3r.com>
+     */
+    protected function success($int)
+    {
+        switch ($int) {
+            case 200:
+                return true;
+
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Get a curl handle
+     *
+     * @return resource
+     * @throws \D3R\Exception
+     * @author Ronan Chilvers <ronan@d3r.com>
+     */
+    protected function curl()
+    {
+        if (!is_resource($this->_curlHandle)) {
+            $credentials    = $this->option('username') . ':' . $this->option('password');
+            $curl           = curl_init();
+            $options        = array(
+                    // CURLOPT_HTTPAUTH            => CURLAUTH_BASIC,
+                    // CURLOPT_USERPWD             => $credentials,
+                    CURLOPT_SSL_VERIFYPEER      => $this->option('verify_peer'),
+                    CURLOPT_RETURNTRANSFER      => true,
+                    CURLINFO_HEADER_OUT         => true,
+                );
+            if (!curl_setopt_array($curl, $options)) {
+                throw new \D3R\Exception('Unable to create curl connection');
+            }
+
+            $this->_curlHandle = $curl;
+        }
+        return $this->_curlHandle;
     }
 }

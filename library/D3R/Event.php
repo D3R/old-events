@@ -43,12 +43,20 @@ class Event
     protected $_name;
 
     /**
+     * Additional tags for this event
+     *
+     * @var array
+     * @author Ronan Chilvers <ronan@d3r.com>
+     */
+    protected $_tags = array();
+
+    /**
      * This array stores the data name value pairs for this event
      *
      * @param array
      * @author Ronan Chilvers <ronan@d3r.com>
      */
-    protected $_data;
+    protected $_data = array();
 
     /**
      * Class constructor
@@ -109,6 +117,17 @@ class Event
     }
 
     /**
+     * Get the keys for the current data array
+     *
+     * @return array
+     * @author Ronan Chilvers <ronan@d3r.com>
+     */
+    public function getDataKeys()
+    {
+        return array_keys($this->_data);
+    }
+
+    /**
      * Get all the data for this event as an array
      *
      * @return array
@@ -143,5 +162,30 @@ class Event
     {
         $this->_data[$key] = $value;
         return $this;
+    }
+
+    /**
+     * Add a tag to this event
+     *
+     * @param string $tag
+     * @return $this
+     * @author Ronan Chilvers <ronan@d3r.com>
+     */
+    public function tag($tag)
+    {
+        $this->_tags[$tag] = $tag;
+
+        return $this;
+    }
+
+    /**
+     * Get the tags for this event
+     *
+     * @return array
+     * @author Ronan Chilvers <ronan@d3r.com>
+     */
+    public function getTags()
+    {
+        return array_values($this->_tags);
     }
 }

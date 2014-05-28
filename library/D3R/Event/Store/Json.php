@@ -56,6 +56,7 @@ class Json extends Base
 
         $data = array(
             'name'          => $event->getName(),
+            'tags'          => $event->getTags(),
             'timestamp'     => $event->getTimestamp(),
             'data'          => $event->getData()
         );
