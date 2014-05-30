@@ -77,18 +77,18 @@ class Influxdb extends Base
      * @return $this
      * @author Ronan Chilvers <ronan@d3r.com>
      */
-    public function batchWrite(\D3R\Event $event)
-    {
-        if (!is_array($this->_batchEvents)) {
-            $this->_batchEvents = array();
-        }
-        if (!isset($this->_batchEvents[$event->getName()])) {
-            $this->_batchEvents[$event->getName()] = array();
-        }
-        $this->_batchEvents[$event->getName()][] = $event;
+    // public function batchWrite(\D3R\Event $event)
+    // {
+    //     if (!is_array($this->_batchEvents)) {
+    //         $this->_batchEvents = array();
+    //     }
+    //     if (!isset($this->_batchEvents[$event->getName()])) {
+    //         $this->_batchEvents[$event->getName()] = array();
+    //     }
+    //     $this->_batchEvents[$event->getName()][] = $event;
 
-        return true;
-    }
+    //     return true;
+    // }
 
     /**
      * Write pending batches of data
@@ -97,63 +97,37 @@ class Influxdb extends Base
      * @throws \D3R\Exception
      * @author Ronan Chilvers <ronan@d3r.com>
      */
-    public function commitBatch()
-    {
-        if (empty($this->_batchEvents)) {
-            return true;
-        }
+    // public function commitBatch()
+    // {
+    //     if (empty($this->_batchEvents)) {
+    //         return true;
+    //     }
 
-        $db = $this->db();
+    //     $db = $this->db();
 
-        try {
+    //     try {
 
-            foreach ($this->_batchEvents as $name => $events) {
-                if (!empty($events)) {
-                    continue;
-                }
+    //         foreach ($this->_batchEvents as $name => $events) {
+    //             if (!empty($events)) {
+    //                 continue;
+    //             }
 
-                $data = array();
-                foreach ($events as $event) {
-                    $datum          = $event->getData();
-                    $datum['time']  = $event->getTimestamp();
+    //             $data = array();
+    //             foreach ($events as $event) {
+    //                 $datum          = $event->getData();
+    //                 $datum['time']  = $event->getTimestamp();
 
-                    $data[]         = $datum;
-                }
-                $db->insert($name, $data);
-            }
-        }
-        catch (Exception $ex) {
-            throw new \D3R\Exception($ex->getMessage());
-        }
+    //                 $data[]         = $datum;
+    //             }
+    //             $db->insert($name, $data);
+    //         }
+    //     }
+    //     catch (Exception $ex) {
+    //         throw new \D3R\Exception($ex->getMessage());
+    //     }
 
-        return true;
-    }
-
-    /**
-     * Get an influxdb db instance
-     *
-     * @return \crodas\InfluxPHP\DB
-     * @throws \D3R\Exception
-     * @author Ronan Chilvers <ronan@d3r.com>
-     */
-    protected function db()
-    {
-        try {
-            $client = new \crodas\InfluxPHP\Client(
-                $this->option('hostname'),
-                $this->option('port'),
-                $this->option('username'),
-                $this->option('password')
-            );
-
-            $db = $client->getDatabase($this->option('database'));
-        }
-        catch (Exception $ex) {
-            throw new \D3R\Exception($ex->getMessage());
-        }
-
-        return $db;
-    }
+    //     return true;
+    // }
 
     /**
      * Write a dataset to InfluxDB
@@ -173,7 +147,7 @@ class Influxdb extends Base
                 'points'    => $data,
             );
 
-        $url        = 'http://' . $this->option('hostname') . '/db/' . $this->option('database') . '/series?u=' . $this->option('username') . '&p=' . $this->option('password');
+        $url        = 'http://' . $this->option('hostname') . ':' . $this->option('port') . '/db/' . $this->option('database') . '/series?u=' . $this->option('username') . '&p=' . $this->option('password');
         $payload    = json_encode(array($payload));
         $curl       = $this->curl();
 
@@ -181,16 +155,12 @@ class Influxdb extends Base
         curl_setopt($curl, CURLOPT_POST, true);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
 
-// @TODO Remove var_dump
-var_dump($payload);
-
-        if (!$result = curl_exec($curl)) {
+        $result = curl_exec($curl);
+        if (false === $result) {
             throw new \D3R\Exception(curl_error($curl), curl_errno($curl));
         }
 
         $this->_lastCurlStatus = curl_getinfo($curl);
-// @TODO Remove var_dump
-var_dump($this->_lastCurlStatus['http_code']); exit();
         if (!$this->success((int) $this->_lastCurlStatus['http_code'])) {
             throw new \D3R\Exception('Error writing event to InfluxDB');
         }
@@ -231,7 +201,7 @@ var_dump($this->_lastCurlStatus['http_code']); exit();
             $options        = array(
                     // CURLOPT_HTTPAUTH            => CURLAUTH_BASIC,
                     // CURLOPT_USERPWD             => $credentials,
-                    CURLOPT_SSL_VERIFYPEER      => $this->option('verify_peer'),
+                    // CURLOPT_SSL_VERIFYPEER      => $this->option('verify_peer'),
                     CURLOPT_RETURNTRANSFER      => true,
                     CURLINFO_HEADER_OUT         => true,
                 );

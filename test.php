@@ -56,7 +56,7 @@ $event = \D3R\Event::Factory('sara.errors')
             ->set('line', rand(1,100))
             ;
 // @TODO Remove var_dump
-var_dump($event->getData());
+var_dump($event);
 
 // $event1 = \D3R\Event::Factory('sara.errors')
 //             ->set('error', 'Foobar is not defined')
